@@ -659,6 +659,7 @@ const Resultpage = ({ json, sample, newSize }) => {
       };
     } else {
       if (fetch === -1) {
+        console.log(json);
         const fetchData = async () => {
           axios
             .post("http://yjyjpc.iptime.org:55555/holdImg/route/", json, {
@@ -668,6 +669,7 @@ const Resultpage = ({ json, sample, newSize }) => {
             })
             .then((res) => {
               console.log("skel data post test: ", res);
+              console.log(res.data.result);
               setSkel(res.data.result);
             })
             .catch((err) => {
@@ -676,25 +678,24 @@ const Resultpage = ({ json, sample, newSize }) => {
         };
         fetchData();
         setFetch(1);
-      } else {
-        // const rw = newSize.width / 360;
-        // const rh = newSize.height / 360;
+      } else if (skel.length !== 0) {
+        console.log("skel확인: ", skel);
         const rw = 1;
         const rh = 1;
         const skeldata = skel[skeletonIndex].map((skel) => {
-          const rX = skel[0] * rw;
-          const rY = skel[1] * rh;
+          const rX = skel[1] * rw;
+          const rY = skel[0] * rh;
           console.log("rx,ry: ", rw, rh, skel[0], skel[1]);
           return [rX, rY];
         });
         canvasRef2.current.width = newSize.width;
         canvasRef2.current.height = newSize.height;
-        console.log("skelData: ", skeldata);
+        // console.log("skelData: ", skeldata);
         renderSkel(skeldata, 8, "rgba(0,0,0,0.5)");
         renderSkel(skeldata, 5, "rgba(0,0,255,0.0)");
       }
     }
-  }, [fetch, skeletonIndex, imageLoad]);
+  }, [fetch, skel, skeletonIndex, imageLoad]);
 
   //대기 중일 때
   //아직 articles 값이 설정되지 않았을 때

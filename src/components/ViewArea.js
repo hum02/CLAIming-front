@@ -134,21 +134,35 @@ const ViewArea = (props) => {
 
   //render holdBox
   const renderBoxes = () => {
-    console.log("boxes: ", boxes);
     drawCanvas.width = newSize.width;
     drawCanvas.height = newSize.height;
     const ctx = canvasRef2.current.getContext("2d");
     if (submitCheck === 1) {
       console.log("submit");
-      const newCheckbox = checkedBox.map((index) => {
-        return boxes[index];
-      });
-      const newStartbox = startHoldBox.map((index) => {
-        return boxes[index];
-      });
-      const newTopbox = topHoldBox.map((index) => {
-        return boxes[index];
-      });
+      // const newCheckbox = checkedBox.map((index) => {
+      //   return boxes[index];
+      // });
+      // const newStartbox = startHoldBox.map((index) => {
+      //   return boxes[index];
+      // });
+      // const newTopbox = topHoldBox.map((index) => {
+      //   return boxes[index];
+      // });
+      const newCheckbox = checkedBox
+        .map((index) => {
+          return boxes[index];
+        })
+        .map((box) => [box[1], box[0], box[1] + box[3], box[0] + box[2]]);
+      const newStartbox = startHoldBox
+        .map((index) => {
+          return boxes[index];
+        })
+        .map((box) => [box[1], box[0], box[1] + box[3], box[0] + box[2]]);
+      const newTopbox = topHoldBox
+        .map((index) => {
+          return boxes[index];
+        })
+        .map((box) => [box[1], box[0], box[1] + box[3], box[0] + box[2]]);
       setResult({
         start: newStartbox,
         top: newTopbox,

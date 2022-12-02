@@ -161,6 +161,7 @@ const App = () => {
   });
   let ratio = 0;
 
+  console.log("보내기전 : ", result);
   const json = JSON.stringify(result);
   const canvasRef = useRef(null);
   const location = useLocation();
@@ -226,6 +227,7 @@ const App = () => {
     );
     console.log("test: ", canvasRef.current.offCanvas.width);
     formData.append("image", file);
+    console.log(formData);
     fetch("http://yjyjpc.iptime.org:55555/holdImg/", {
       method: "POST",
       body: formData,
@@ -233,7 +235,7 @@ const App = () => {
       .then((response) => response.json())
       .then((response) => {
         if (response) {
-          console.log(response.coordinates);
+          console.log("response cord", response.coordinates);
           setBoxes(
             response.coordinates.map((box) => [
               box[1],
@@ -243,6 +245,7 @@ const App = () => {
             ])
           );
           setimgId(response.id);
+          console.log("boxes화인: ", boxes);
         }
       });
   };
