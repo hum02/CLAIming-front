@@ -23,9 +23,6 @@ const ViewArea = (props) => {
     newSize,
   } = props;
 
-  const [imageH, setImageH] = useState(0);
-  const [imageW, setImageW] = useState(0);
-
   const drawBox = (box, color, lineWidth, index, ctx) => {
     if (!box || typeof box === "undefined") return null;
     const coord = box.coord ? box.coord : box;
@@ -329,21 +326,14 @@ const ViewArea = (props) => {
         console.log("onload");
         //입력 파일의 크기를 알아냄
         const { width, height } = newSize;
-        const inW = image.width;
-        const inH = image.height;
-        setImageH(inH);
-        setImageW(inW);
         console.log(image);
-
         // 캔버스 크기를 결정
         outCanvas.width = width;
         outCanvas.height = height;
 
         console.log("width: ", width, "height: ", height);
-        // ctx.drawImage(image, 0, 0, width, height, 0, 0, 720, 720);
         ctx.drawImage(image, 0, 0, 720, 720);
         setImageLoad(true);
-        // isImageLoaded.current = true;
       };
     } else {
       renderBoxes();

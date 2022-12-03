@@ -3,10 +3,10 @@ import axios from "axios";
 import "../App.css";
 
 const Resultpage = ({ json, sample, newSize }) => {
-  const [loading, setLoading] = useState(false);
   const [skeletonIndex, setSkeletonIndex] = useState(0);
   const [imageLoad, setImageLoad] = useState(false);
   const [skel, setSkel] = useState([]);
+  const [holds, setHolds] = useState([]);
   // const skel = [
   //   [
   //     [213, 295],
@@ -532,7 +532,6 @@ const Resultpage = ({ json, sample, newSize }) => {
   //   ],
   // ];
   const [fetch, setFetch] = useState(-1);
-
   const canvasRef = useRef(null);
   const canvasRef2 = useRef(null);
   // const outCanvas = canvasRef.current;
@@ -645,6 +644,7 @@ const Resultpage = ({ json, sample, newSize }) => {
   };
 
   useEffect(() => {
+    if (!canvasRef) return;
     if (!imageLoad) {
       const ctx = canvasRef.current.getContext("2d");
       const image = new Image();
@@ -653,7 +653,6 @@ const Resultpage = ({ json, sample, newSize }) => {
       image.onload = () => {
         canvasRef.current.width = newSize.width;
         canvasRef.current.height = newSize.height;
-
         ctx.drawImage(image, 0, 0, 720, 720);
         setImageLoad(true);
       };
@@ -669,8 +668,9 @@ const Resultpage = ({ json, sample, newSize }) => {
             })
             .then((res) => {
               console.log("skel data post test: ", res);
-              console.log(res.data.result);
-              setSkel(res.data.result);
+              console.log(res.data.result.joint);
+              setSkel(res.data.result.joint);
+              setHolds(res.data.result.holds);
             })
             .catch((err) => {
               console.log("select hold post err", err);
@@ -678,7 +678,7 @@ const Resultpage = ({ json, sample, newSize }) => {
         };
         fetchData();
         setFetch(1);
-      } else if (skel.length !== 0) {
+      } else if (skel.length !== 0 && holds.length !== 0) {
         console.log("skel확인: ", skel);
         const rw = 1;
         const rh = 1;
@@ -690,12 +690,62 @@ const Resultpage = ({ json, sample, newSize }) => {
         });
         canvasRef2.current.width = newSize.width;
         canvasRef2.current.height = newSize.height;
-        // console.log("skelData: ", skeldata);
+
+        const holdsdata = holds[skeletonIndex].map((box) => {
+          return [box[1], box[0], box[3] - box[1], box[2] - box[0]];
+        });
+
+        renderHolds(holdsdata[0], 2, "rgba(0,0,255,0.9)");
+        renderHolds(holdsdata[1], 2, "rgba(0,0,255,0.9)");
         renderSkel(skeldata, 8, "rgba(0,0,0,0.5)");
         renderSkel(skeldata, 5, "rgba(0,0,255,0.0)");
       }
     }
   }, [fetch, skel, skeletonIndex, imageLoad]);
+
+  const renderHolds = (box, lineWidth, color) => {
+    const ctx = canvasRef2.current.getContext("2d");
+    if (!box || typeof box === "undefined") return null;
+    const coord = box.coord ? box.coord : box;
+    let [x, y, width, height] = [0, 0, 0, 0];
+    if (
+      typeof coord.xmin !== "undefined" &&
+      typeof coord.xmax !== "undefined" &&
+      typeof coord.ymin !== "undefined" &&
+      typeof coord.ymax !== "undefined"
+    ) {
+      [x, y, width, height] = [
+        Math.min(coord.xmin, coord.xmax),
+        Math.min(coord.ymin, coord.ymax),
+        Math.max(coord.xmin, coord.xmax) - Math.min(coord.xmin, coord.xmax),
+        Math.max(coord.ymin, coord.ymax) - Math.min(coord.ymin, coord.ymax),
+      ];
+    } else {
+      // coord is an array containing [x, y, width, height] values
+      [x, y, width, height] = coord;
+    }
+
+    if (x < lineWidth / 2) {
+      x = lineWidth / 2;
+    }
+    if (y < lineWidth / 2) {
+      y = lineWidth / 2;
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth / 2;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(x + width + 1, y);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x, y + height);
+    ctx.lineTo(x + width, y + height);
+    ctx.lineTo(x + width, y);
+    ctx.fillStyle = "rgba(0,0,255,0.2)";
+    ctx.fill();
+    ctx.stroke();
+  };
 
   //대기 중일 때
   //아직 articles 값이 설정되지 않았을 때
@@ -715,18 +765,23 @@ const Resultpage = ({ json, sample, newSize }) => {
       >
         pre
       </button>
-      <div
-        className="canvasArea"
-        style={{ height: newSize.height, width: newSize.width }}
-      >
-        <canvas id="canvas" ref={canvasRef} />
-        <canvas id="canvas2" ref={canvasRef2} />
-      </div>
+
+      {
+        <div
+          className="canvasArea"
+          style={{ height: newSize.height, width: newSize.width }}
+        >
+          <canvas id="canvas" ref={canvasRef} />
+          <canvas id="canvas2" ref={canvasRef2} />
+        </div>
+      }
 
       <button
         className="button-9"
         onClick={() => {
-          if (skeletonIndex < skel.length) setSkeletonIndex(skeletonIndex + 1);
+          if (skeletonIndex + 1 < skel.length)
+            setSkeletonIndex(skeletonIndex + 1);
+          else alert("마지막 페이지입니다.");
         }}
       >
         next
