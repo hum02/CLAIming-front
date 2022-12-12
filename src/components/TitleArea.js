@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const StyledH1 = styled.h1`
   text-align: center;
+  font-size: 24px;
   margin-top: 50px;
 `;
 
@@ -20,16 +21,18 @@ const StyledH2 = styled.div`
 `;
 
 const TitleArea = ({ pageIndex, submitCheck }) => {
-  const [title, setTitle] = useState("Select hold page");
+  const [title, setTitle] = useState("문제에 사용되는 홀드를 모두 선택하세요.");
   useEffect(() => {
     if (submitCheck < 0) {
-      if (pageIndex === 1) {
-        setTitle("Select start hold");
+      if (pageIndex === 0) {
+        setTitle("문제에 사용되는 홀드를 모두 선택하세요.");
+      } else if (pageIndex === 1) {
+        setTitle("스타트 홀드를 선택하세요.");
       } else if (pageIndex === 2) {
-        setTitle("Select top Hold");
+        setTitle("탑 홀드를 선택하세요.");
       }
     } else {
-      setTitle("Result Page");
+      setTitle("옆으로 넘겨가며 자세를 확인하세요.");
     }
   }, [pageIndex, submitCheck]);
 

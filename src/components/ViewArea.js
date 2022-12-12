@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../App.css";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const ViewArea = (props) => {
   const [checkedBox, setCheckedBox] = useState([]);
@@ -9,7 +10,6 @@ const ViewArea = (props) => {
   const canvasRef = useRef(null);
   const canvasRef2 = useRef(null);
   const drawCanvas = canvasRef2.current;
-
   const outCanvas = canvasRef.current;
   const {
     boxes,
@@ -185,11 +185,11 @@ const ViewArea = (props) => {
       }
       if (checkedBox.length === 0) {
         setpageIndex(0);
-        alert("select hold box!");
+        alert("홀드가 선택되지 않았습니다.");
       }
       if (startHoldBox.length > 2) {
         setpageIndex(1);
-        alert("start hold는 2개 이하로 선택!");
+        alert('스타트 홀드는 2개 이하로 선택해주세요."');
         startHoldBox.pop();
       }
       boxes
@@ -203,12 +203,12 @@ const ViewArea = (props) => {
     }
     if (pageIndex === 2) {
       if (startHoldBox.length === 0) {
-        alert("Start Hold가 선택되지 않았습니다.");
+        alert("스타트 홀드가 선택되지 않았습니다.");
         setpageIndex(1);
       }
       if (topHoldBox.length > 1) {
         setpageIndex(2);
-        alert("top hold는 1개 선택!");
+        alert("탑 홀드는 한 개 선택해주세요.");
         topHoldBox.pop();
       }
       boxes

@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "../App.css";
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const Resultpage = ({ json, sample, newSize }) => {
   const [skeletonIndex, setSkeletonIndex] = useState(0);
@@ -749,21 +751,21 @@ const Resultpage = ({ json, sample, newSize }) => {
 
   //대기 중일 때
   //아직 articles 값이 설정되지 않았을 때
-  // if (!skel) {
-  //   return null;
+  // if (skel.length === 0) {
+  //   return <div>로딩</div>;
   // }
 
   //articles 값이 유효할 때
   return (
     <div className="result-wrapper">
       <button
-        className="button-9"
+        className="index-button"
         onClick={() => {
           console.log(skeletonIndex);
           if (skeletonIndex > 0) setSkeletonIndex(skeletonIndex - 1);
         }}
       >
-        pre
+        <IoIosArrowBack size={40} color="black" />
       </button>
 
       {
@@ -777,14 +779,14 @@ const Resultpage = ({ json, sample, newSize }) => {
       }
 
       <button
-        className="button-9"
+        className="index-button"
         onClick={() => {
           if (skeletonIndex + 1 < skel.length)
             setSkeletonIndex(skeletonIndex + 1);
           else alert("마지막 페이지입니다.");
         }}
       >
-        next
+        <IoIosArrowForward size={40} color="black" />
       </button>
     </div>
   );
